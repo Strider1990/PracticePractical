@@ -12,26 +12,34 @@ import MapKit
 
 class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate, UITableViewDelegate, UITableViewDataSource {
 
+    // Outlets
     @IBOutlet weak var sizeSegment: UISegmentedControl!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var distanceLabel: UILabel!
     
+    // Location Manager optional
     var lm : CLLocationManager?
     
+    // Current location optional
     var cl : CLLocation?
     
+    // Estate array to store list of estates
     var estates : [Estate] = []
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
+        // Initialize location manager
         lm = CLLocationManager()
         
+        // Set location manager delegate to ViewController
         lm?.delegate = self
         
+        // Set distance filter to 5m
         lm?.distanceFilter = 5
         
+        // Request authorization from user
         let ios8 = lm?.responds(to: #selector(CLLocationManager.requestAlwaysAuthorization))
         if (ios8!) {
             lm?.requestAlwaysAuthorization()
@@ -41,38 +49,49 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // Set tableView delegate and dataSource
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.mapView.delegate = self
         
         // Do any additional setup after loading the view.
-        DispatchQueue.global(qos: .background).async
-        {
-            HTTP.postJSON(url: "http://crowd.sit.nyp.edu.sg/itp312_2017s1/estate/list", json: JSON.init([]), onComplete: {
-                json, response, error in
-                
-                if json == nil
-                {
-                    return
-                }
-                
-                for i in 0 ..< json!.count
-                {
-                    self.estates.append(
-                        Estate(
-                            name: json![i]["name"].string!,
-                            population: json![i]["pop"].int!,
-                            latitude: json![i]["latitude"].double!,
-                            longitude: json![i]["longitude"].double!)
-                    )
-                }
-                
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.showMapPins()
-                }
-            })
-        }
+        // Not necessary, to add HTTP runs in the background
         
+        // Set background to postJSON to retrieve data
+        HTTP.postJSON(
+            url: "http://crowd.sit.nyp.edu.sg/itp312_2017s1/estate/list", // Set URL to post JSON to
+            json: JSON.init([]), // Initialize empty JSON array
+            onComplete: { // Closure on complete
+            json, response, error in
+            // postJSON responses
+                
+            if json == nil
+            // Check for nil reply for JSON
+            {
+                return
+            }
+            
+            for i in 0 ..< json!.count
+            // Loop through JSON
+            {
+                // Add Estate object to estate list
+                self.estates.append(
+                    Estate(
+                        name: json![i]["name"].string!,
+                        population: json![i]["pop"].int!,
+                        latitude: json![i]["latitude"].double!,
+                        longitude: json![i]["longitude"].double!)
+                )
+            }
+            
+            DispatchQueue.main.async {
+                // On completion of post, reload Data and showMapPins
+                self.tableView.reloadData()
+                self.showMapPins()
+            }
+        })
+        
+        // Start updating location for location manager
         lm?.startUpdatingLocation()
     }
 
@@ -81,9 +100,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Dispose of any resources that can be recreated.
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
+    // Not necessary
+//    func numberOfSections(in tableView: UITableView) -> Int {
+//        return 1
+//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return estates.count
@@ -94,7 +114,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
         let e = estates[indexPath.row]
         
-        cell.imageView?.image = UIImage(named: "house.jpg")
+        cell.imageView?.image = #imageLiteral(resourceName: "house")
         cell.textLabel?.text = e.name
         cell.detailTextLabel?.text = "Population: \(e.population)"
         
@@ -123,6 +143,45 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         }
     }
     
+    // Implement this function in order to override the look at
+    // feel of your callout
+    //
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation)
+        -> MKAnnotationView? {
+            // Pins can be reused just like table view cells as 
+            // they move in and out of the map
+            var pinView = mapView.dequeueReusableAnnotationView(
+                withIdentifier: "Annotation") as? MKPinAnnotationView
+            if pinView == nil {
+                // Creates a new bluish MKPinAnnotationView using the
+                // same reuse ID as above.
+                //
+                pinView = MKPinAnnotationView(
+                    annotation: annotation,
+                    reuseIdentifier: "Annotation")
+                pinView?.pinTintColor = UIColor(
+                    red: 0.1, green: 0.3, blue: 1, alpha: 0.7)
+                pinView?.canShowCallout = true
+                pinView?.animatesDrop = true
+//            // Show an image on the left side of the call out
+//            //
+//            let imageView = UIImageView(
+//                image: UIImage(named: "MapCallout"))
+//            imageView.frame = CGRect(
+//                x: 0,
+//                y: 0,
+//                width: 60,
+//                height: 60)
+//            imageView.contentMode = .scaleAspectFill
+//            pinView?.leftCalloutAccessoryView = imageView
+//            // Show a button on the right side of the call out 
+//            //
+//            let button = UIButton(type: .infoDark)
+//            pinView?.rightCalloutAccessoryView = button
+        }
+        return pinView
+    }
+    
     func showMapPins()
     {
         for i in 0 ..< estates.count
@@ -140,7 +199,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     }
 
     @IBAction func segmentChanged(_ sender: UISegmentedControl) {
-        tableView.reloadData()
+        self.tableView.reloadData()
     }
     /*
     // MARK: - Navigation

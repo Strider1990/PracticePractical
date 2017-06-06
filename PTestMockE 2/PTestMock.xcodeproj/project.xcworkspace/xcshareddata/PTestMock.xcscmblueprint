@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "C92366843EB444720697C3DA8467F4F4D223060D",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "3F1A0B478AD98E787A975E82C9E83E310076B554" : 9223372036854775807,
+    "C92366843EB444720697C3DA8467F4F4D223060D" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "BF22F1D3-B569-4948-B84D-A283ED3F0DCE",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "3F1A0B478AD98E787A975E82C9E83E310076B554" : "..",
+    "C92366843EB444720697C3DA8467F4F4D223060D" : "PracticePractical\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "PTestMock",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "PTestMockE 2\/PTestMock.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/Strider1990\/itp312pract.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "3F1A0B478AD98E787A975E82C9E83E310076B554"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/Strider1990\/PracticePractical.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C92366843EB444720697C3DA8467F4F4D223060D"
+    }
+  ]
+}

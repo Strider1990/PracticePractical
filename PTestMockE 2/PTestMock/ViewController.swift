@@ -44,6 +44,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         if (ios8!) {
             lm?.requestAlwaysAuthorization()
         }
+        
+        if CLLocationManager.headingAvailable()
+        {
+            lm?.headingFilter = 5
+            
+            lm?.startUpdatingHeading()
+        }
     }
     
     override func viewDidLoad() {
@@ -52,6 +59,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Set tableView delegate and dataSource
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        self.mapView.showsUserLocation = true
+        self.mapView.isZoomEnabled = true
+        self.mapView.isScrollEnabled = true
+        self.mapView.mapType = MKMapType.standard
         self.mapView.delegate = self
         
         // Do any additional setup after loading the view.
@@ -148,7 +159,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     //
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation)
         -> MKAnnotationView? {
-            // Pins can be reused just like table view cells as 
+            
+        if annotation is MapAnnotation
+        {
+            // Pins can be reused just like table view cells as
             // they move in and out of the map
             var pinView = mapView.dequeueReusableAnnotationView(
                 withIdentifier: "Annotation") as? MKPinAnnotationView
@@ -163,23 +177,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                     red: 0.1, green: 0.3, blue: 1, alpha: 0.7)
                 pinView?.canShowCallout = true
                 pinView?.animatesDrop = true
-//            // Show an image on the left side of the call out
-//            //
-//            let imageView = UIImageView(
-//                image: UIImage(named: "MapCallout"))
-//            imageView.frame = CGRect(
-//                x: 0,
-//                y: 0,
-//                width: 60,
-//                height: 60)
-//            imageView.contentMode = .scaleAspectFill
-//            pinView?.leftCalloutAccessoryView = imageView
-//            // Show a button on the right side of the call out 
-//            //
-//            let button = UIButton(type: .infoDark)
-//            pinView?.rightCalloutAccessoryView = button
+                //            // Show an image on the left side of the call out
+                //            //
+                //            let imageView = UIImageView(
+                //                image: UIImage(named: "MapCallout"))
+                //            imageView.frame = CGRect(
+                //                x: 0,
+                //                y: 0,
+                //                width: 60,
+                //                height: 60)
+                //            imageView.contentMode = .scaleAspectFill
+                //            pinView?.leftCalloutAccessoryView = imageView
+                //            // Show a button on the right side of the call out 
+                //            //
+                //            let button = UIButton(type: .infoDark)
+                //            pinView?.rightCalloutAccessoryView = button
+            }
+            
+            return pinView
         }
-        return pinView
+        return nil
     }
     
     func showMapPins()
@@ -196,6 +213,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         cl = locations.last
+        
+        var span = MKCoordinateSpan()
+        span.longitudeDelta = 0.02
+        span.latitudeDelta = 0.02
+        
+        var location = CLLocationCoordinate2D()
+        location.latitude = (locations.last?.coordinate.latitude)!
+        location.longitude = (locations.last?.coordinate.longitude)!
+        
+        var region = MKCoordinateRegion()
+        region.span = span
+        region.center = location
+        
+        mapView.setRegion(region, animated: true)
     }
 
     @IBAction func segmentChanged(_ sender: UISegmentedControl) {

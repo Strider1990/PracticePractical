@@ -41,11 +41,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        //self.tableView.delegate = self
-        //self.tableView.dataSource = self
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
         
         // Do any additional setup after loading the view.
-        DispatchQueue.global().async
+        DispatchQueue.global(qos: .background).async
         {
             HTTP.postJSON(url: "http://crowd.sit.nyp.edu.sg/itp312_2017s1/estate/list", json: JSON.init([]), onComplete: {
                 json, response, error in
@@ -60,17 +60,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
                     self.estates.append(
                         Estate(
                             name: json![i]["name"].string!,
-                            population: json![i]["population"].int!,
+                            population: json![i]["pop"].int!,
                             latitude: json![i]["latitude"].double!,
                             longitude: json![i]["longitude"].double!)
                     )
                 }
+                
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.showMapPins()
+                }
             })
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                self.showMapPins()
-            }
         }
         
         lm?.startUpdatingLocation()
@@ -119,7 +119,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         let e = estates[indexPath.row]
         
         if let distanceBetween = cl?.distance(from: CLLocation(latitude: e.latitude, longitude: e.longitude)) {
-            self.distanceLabel.text = String(format: "Distance: %.3f", Double(distanceBetween) / 1000)
+            self.distanceLabel.text = String(format: "Distance: %.3f km", Double(distanceBetween) / 1000)
         }
     }
     

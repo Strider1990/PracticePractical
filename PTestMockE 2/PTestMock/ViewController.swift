@@ -59,10 +59,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         // Set tableView delegate and dataSource
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        self.mapView.showsUserLocation = true
-        self.mapView.isZoomEnabled = true
-        self.mapView.isScrollEnabled = true
-        self.mapView.mapType = MKMapType.standard
         self.mapView.delegate = self
         
         // Do any additional setup after loading the view.
@@ -129,16 +125,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         cell.textLabel?.text = e.name
         cell.detailTextLabel?.text = "Population: \(e.population)"
         
+        cell.imageView?.alpha = 1.0
         cell.textLabel?.textColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         cell.detailTextLabel?.textColor = UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         
         if (e.population >= 100000 && sizeSegment.selectedSegmentIndex == 1)
         {
+            cell.imageView?.alpha = 0.3
             cell.textLabel?.textColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0)
             cell.detailTextLabel?.textColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0)
         }
         else if (e.population <= 100000 && sizeSegment.selectedSegmentIndex == 2)
         {
+            cell.imageView?.alpha = 0.3
             cell.textLabel?.textColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0)
             cell.detailTextLabel?.textColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1.0)
         }
